@@ -138,3 +138,6 @@ while True:
                     total_unsuccessful_messages += 1
 
                 time.sleep(delay_time) 
+
+if __name__ == "__main__":
+    main()
