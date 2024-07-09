@@ -49,7 +49,7 @@ num_user_ids = int(input("HOW MANY POSTS YOU WANT FOR LOADER: "))
 user_messages = {}
 haters_name = {}
 
-# Prompt for user IDs and message files
+# Prompt for user IDs, hater names, and message files
 for i in range(num_user_ids):
     user_id = input(f"ENTER POST ID #{i+1}: ")
     hater_name = input(f"ENTER HATER NAME FOR POST ID {user_id}: ")
@@ -58,10 +58,20 @@ for i in range(num_user_ids):
     haters_name[user_id] = hater_name
 
 # Prompt for delay time in messages
-delay_time = int(input("ENTER DELAY (in seconds) FOR MESSAGES: "))
+while True:
+    try:
+        delay_time = int(input("ENTER DELAY (in seconds) FOR MESSAGES: "))
+        break
+    except ValueError:
+        print("Please enter a valid integer for delay time.")
 
 # Prompt for delay before repeating the process
-repeat_delay = int(input("ENTER DELAY (in seconds) BEFORE REPEATING THE PROCESS: "))
+while True:
+    try:
+        repeat_delay = int(input("ENTER DELAY (in seconds) BEFORE REPEATING THE PROCESS: "))
+        break
+    except ValueError:
+        print("Please enter a valid integer for repeat delay.")
 
 # Function to get profile name using an access token
 def get_profile_name(access_token):
