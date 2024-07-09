@@ -16,7 +16,6 @@ from time import sleep
 os.system("xdg-open https://www.facebook.com/groups/294191408815536/?ref=share")
 time.sleep(1)
 
-logo = r'
   /$$$$$$   /$$$$$$  /$$      /$$ /$$$$$$$$ /$$$$$$$$ /$$$$$$$ 
  /$$__  $$ /$$__  $$| $$$    /$$$| $$_____/| $$_____/| $$__  $$
 | $$  \__/| $$  \ $$| $$$$  /$$$$| $$      | $$      | $$  \ $$
